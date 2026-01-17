@@ -13,7 +13,6 @@ const App: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionData[]>([]);
   const [isAuditingId, setIsAuditingId] = useState<string | null>(null);
 
-  // Sync tab on role switch
   useEffect(() => {
     if (activeRole === UserRole.TEACHER) {
       setActiveTab('input');
@@ -23,6 +22,7 @@ const App: React.FC = () => {
   }, [activeRole]);
 
   const handleAddQuestion = (q: QuestionData) => {
+    // If the question already has an audit (from Smart Paste), we push it directly
     setQuestions(prev => [q, ...prev]);
     setActiveTab('review');
   };
@@ -30,7 +30,6 @@ const App: React.FC = () => {
   const handleAddBulk = (qs: QuestionData[]) => {
     setQuestions(prev => [...qs, ...prev]);
     setActiveTab('review');
-    alert(`Successfully ingested and audited ${qs.length} questions from the document.`);
   };
 
   const handleAuditRequest = async (id: string) => {
@@ -46,7 +45,7 @@ const App: React.FC = () => {
           : item
       ));
     } catch (err) {
-      alert("Audit failed. The AI engine is busy or the input was malformed.");
+      alert("Audit failed.");
     } finally {
       setIsAuditingId(null);
     }
@@ -58,7 +57,6 @@ const App: React.FC = () => {
         ? { ...item, audit: { ...item.audit, status: QuestionStatus.APPROVED }, version: 3 }
         : item
     ));
-    alert("Question Locked and Approved for Exam Production.");
   };
 
   const allLogs: AuditLog[] = questions.flatMap(q => q.audit?.logs || []);
@@ -67,17 +65,16 @@ const App: React.FC = () => {
     switch (activeTab) {
       case 'input':
         return <QuestionInput onAdd={handleAddQuestion} onAddBulk={handleAddBulk} />;
-      
       case 'review':
         return (
           <div className="space-y-6">
             <header className="mb-8">
               <h1 className="text-3xl font-black text-slate-900">Audit Pipeline</h1>
-              <p className="text-slate-500 font-medium">Review AI interventions and verify corrected logic before submission.</p>
+              <p className="text-slate-500 font-medium">Review interventions and verify corrected logic.</p>
             </header>
             {questions.length === 0 ? (
               <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center">
-                <p className="text-slate-400 font-bold uppercase tracking-widest">No Questions in Pipeline</p>
+                <p className="text-slate-400 font-bold uppercase tracking-widest">No Questions Processed</p>
                 <button onClick={() => setActiveTab('input')} className="mt-4 text-indigo-600 font-bold hover:underline">Go to Input</button>
               </div>
             ) : (
@@ -92,22 +89,19 @@ const App: React.FC = () => {
             )}
           </div>
         );
-
       case 'analytics':
         return <AnalyticsDashboard logs={allLogs} />;
-
       case 'approval':
         const pending = questions.filter(q => q.audit && q.audit.status !== QuestionStatus.APPROVED);
         return (
           <div className="space-y-6">
             <header className="mb-8">
               <h1 className="text-3xl font-black text-slate-900">QC Command Center</h1>
-              <p className="text-slate-500 font-medium">Final approval required for all AI-corrected content.</p>
+              <p className="text-slate-500 font-medium">Final approval required for all content.</p>
             </header>
             {pending.length === 0 ? (
               <div className="bg-green-50 rounded-2xl border border-green-100 p-12 text-center">
                 <p className="text-green-600 font-black uppercase tracking-widest">Queue Clear</p>
-                <p className="text-green-500 text-sm mt-1">All processed questions have been approved.</p>
               </div>
             ) : (
               pending.map(q => (
@@ -123,7 +117,6 @@ const App: React.FC = () => {
             )}
           </div>
         );
-
       default:
         return null;
     }
