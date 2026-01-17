@@ -23,11 +23,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
   };
 
   const renderRedlined = (html: any) => {
-    // Handle potential undefined or non-string values from API or state
     const safeHtml = typeof html === 'string' ? html : '';
     if (!safeHtml) return <span className="text-slate-400 italic">No content available</span>;
 
-    // Basic parser for <del> and <ins>
     return (
       <div 
         className="prose-sm max-w-none"
@@ -41,16 +39,21 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
     );
   };
 
+  // Safely extract options with fallbacks
+  const displayOptions = data.audit?.redlines?.options || data.original?.options || [];
+  const cleanOptions = data.audit?.clean?.options || [];
+  const correctIdx = data.audit?.clean?.correctOptionIndex ?? data.original?.correctOptionIndex ?? 0;
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6 group hover:border-indigo-300 transition">
       {/* Header */}
       <div className="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-center gap-4">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Q#{data.id.slice(0, 4)}</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Q#{data.id?.slice(0, 4) || 'N/A'}</span>
           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${getStatusStyle(data.audit?.status || QuestionStatus.PENDING)}`}>
             {data.audit?.status || 'UNAUDITED'}
           </span>
-          <span className="text-xs font-medium text-slate-500 bg-slate-200 px-2 py-0.5 rounded">{data.topic}</span>
+          <span className="text-xs font-medium text-slate-500 bg-slate-200 px-2 py-0.5 rounded">{data.topic || 'General'}</span>
         </div>
         
         <div className="flex items-center gap-2">
@@ -88,15 +91,19 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
           <div className="space-y-6">
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider">Question Body</p>
-              {data.audit ? renderRedlined(data.audit.redlines.question) : <p className="text-slate-800 font-medium">{data.original.question}</p>}
+              {data.audit?.redlines?.question ? (
+                renderRedlined(data.audit.redlines.question)
+              ) : (
+                <p className="text-slate-800 font-medium">{data.original?.question || 'No question text provided.'}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(data.audit?.redlines.options || data.original.options).map((opt, i) => (
-                <div key={i} className={`p-3 rounded-lg border flex items-start gap-3 ${i === (data.audit?.clean.correctOptionIndex ?? data.original.correctOptionIndex) ? 'bg-green-50 border-green-200' : 'border-slate-100 bg-slate-50/30'}`}>
+              {displayOptions.map((opt, i) => (
+                <div key={i} className={`p-3 rounded-lg border flex items-start gap-3 ${i === correctIdx ? 'bg-green-50 border-green-200' : 'border-slate-100 bg-slate-50/30'}`}>
                   <span className="font-bold text-xs text-slate-400 mt-0.5">{String.fromCharCode(65+i)})</span>
                   <div className="text-sm text-slate-700">
-                    {data.audit ? renderRedlined(opt) : opt}
+                    {data.audit?.redlines?.options ? renderRedlined(opt) : opt}
                   </div>
                 </div>
               ))}
@@ -105,7 +112,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider">Solution Logic</p>
               <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 text-sm italic text-slate-600">
-                {data.audit ? renderRedlined(data.audit.redlines.solution) : data.original.solution}
+                {data.audit?.redlines?.solution ? (
+                  renderRedlined(data.audit.redlines.solution)
+                ) : (
+                  data.original?.solution || 'No solution provided.'
+                )}
               </div>
             </div>
 
@@ -128,15 +139,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
           <div className="space-y-6">
             <div>
               <p className="text-[10px] font-bold text-green-500 uppercase mb-2 tracking-wider">Exam-Ready Question</p>
-              <p className="text-slate-900 font-semibold text-lg leading-relaxed">{data.audit.clean.question}</p>
+              <p className="text-slate-900 font-semibold text-lg leading-relaxed">{data.audit?.clean?.question || 'No cleaned content available.'}</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.audit.clean.options.map((opt, i) => (
-                <div key={i} className={`p-4 rounded-xl border-2 transition ${i === data.audit?.clean.correctOptionIndex ? 'border-green-500 bg-green-50' : 'border-slate-100 hover:border-slate-200'}`}>
+              {cleanOptions.map((opt, i) => (
+                <div key={i} className={`p-4 rounded-xl border-2 transition ${i === correctIdx ? 'border-green-500 bg-green-50' : 'border-slate-100 hover:border-slate-200'}`}>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-400 text-xs">{String.fromCharCode(65+i)}</span>
-                    {i === data.audit?.clean.correctOptionIndex && <span className="bg-green-600 text-white text-[8px] font-black px-1 rounded">CORRECT</span>}
+                    {i === correctIdx && <span className="bg-green-600 text-white text-[8px] font-black px-1 rounded">CORRECT</span>}
                   </div>
                   <p className="text-sm font-medium text-slate-800 mt-1">{opt}</p>
                 </div>
@@ -146,7 +157,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
             <div>
               <p className="text-[10px] font-bold text-indigo-500 uppercase mb-2 tracking-wider">Verified Solution</p>
               <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 text-sm text-slate-700 leading-relaxed">
-                {data.audit.clean.solution}
+                {data.audit?.clean?.solution || 'No cleaned solution available.'}
               </div>
             </div>
           </div>

@@ -95,9 +95,14 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
         
         const mappedQuestions: QuestionData[] = results.map((res: any) => ({
           id: Math.random().toString(36).substr(2, 9),
-          topic: res.topic,
-          original: res.original,
-          audit: res.audit,
+          topic: res.topic || 'Inferred Topic',
+          original: res.originalParsed,
+          audit: {
+            status: res.status,
+            logs: res.auditLogs,
+            redlines: res.redlines,
+            clean: res.clean
+          },
           version: 2,
           lastModified: Date.now()
         }));
@@ -110,7 +115,8 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
       };
       reader.readAsDataURL(file);
     } catch (err) {
-      alert("Failed to process document.");
+      console.error(err);
+      alert("Failed to process document. Ensure the file contains clear MCQ content.");
       setIsProcessing(false);
     }
   };
