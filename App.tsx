@@ -109,6 +109,14 @@ const App: React.FC = () => {
     ));
   };
 
+  const handleReject = (id: string) => {
+    setQuestions(prev => prev.map(item => 
+      item.id === id && item.audit
+        ? { ...item, audit: { ...item.audit, status: QuestionStatus.REJECTED }, version: item.version + 1 }
+        : item
+    ));
+  };
+
   const archiveCurrentPaper = () => {
     if (questions.length === 0) return;
 
@@ -297,6 +305,7 @@ const App: React.FC = () => {
                   data={q} 
                   onAudit={handleAuditRequest} 
                   onApprove={handleApprove}
+                  onReject={handleReject}
                   isAuditing={isAuditingId === q.id}
                   showQCControls
                 />

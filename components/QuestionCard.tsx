@@ -6,11 +6,19 @@ interface QuestionCardProps {
   data: QuestionData;
   onAudit: (id: string) => void;
   onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
   isAuditing: boolean;
   showQCControls?: boolean;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, isAuditing, showQCControls }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ 
+  data, 
+  onAudit, 
+  onApprove, 
+  onReject,
+  isAuditing, 
+  showQCControls 
+}) => {
   const [viewMode, setViewMode] = useState<'AUDIT' | 'CLEAN'>('AUDIT');
 
   const getStatusStyle = (status: QuestionStatus) => {
@@ -177,7 +185,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ data, onAudit, onApprove, i
             >
               Approve & Lock
             </button>
-            <button className="px-4 py-1.5 border border-red-500/50 text-red-400 hover:bg-red-900/20 text-xs font-black rounded uppercase tracking-widest transition">
+            <button 
+              onClick={() => onReject?.(data.id)}
+              className="px-4 py-1.5 border border-red-500/50 text-red-400 hover:bg-red-900/20 text-xs font-black rounded uppercase tracking-widest transition active:scale-95"
+            >
               Reject Paper
             </button>
           </div>
