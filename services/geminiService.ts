@@ -79,9 +79,10 @@ const questionSchemaProperties = {
   }
 };
 
-export const auditRawQuestion = async (rawText: string): Promise<any> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-  const prompt = `Parse and Audit this raw text content. Remove all complex math notations and use simple text: """ ${rawText} """`;
+export const auditRawQuestion = async (rawText: string): Promise<any[]> => {
+  // Fix: Use direct API_KEY reference and correct initialization object
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const prompt = `Parse and Audit this content. It may contain one or multiple multiple-choice questions. Extract them all. Remove all complex math notations and use simple text: """ ${rawText} """`;
 
   try {
     const response = await ai.models.generateContent({
@@ -92,13 +93,17 @@ export const auditRawQuestion = async (rawText: string): Promise<any> => {
         temperature: 0,
         responseMimeType: "application/json",
         responseSchema: {
-          type: Type.OBJECT,
-          properties: questionSchemaProperties,
-          required: ['status', 'topic', 'auditLogs', 'originalParsed', 'redlines', 'clean']
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: questionSchemaProperties,
+            required: ['status', 'topic', 'auditLogs', 'originalParsed', 'redlines', 'clean']
+          }
         }
       }
     });
-    return JSON.parse(response.text);
+    // Fix: Access .text property directly (not a method)
+    return JSON.parse(response.text || '[]');
   } catch (error) {
     console.error("Gemini Audit Error:", error);
     throw error;
@@ -106,7 +111,8 @@ export const auditRawQuestion = async (rawText: string): Promise<any> => {
 };
 
 export const auditQuestion = async (q: QuestionData['original']): Promise<any> => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    // Fix: Use direct API_KEY reference and correct initialization object
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const prompt = `Audit this existing question. Ensure all complex symbols/LaTeX are replaced with plain text:
     Question: ${q.question}
     Options: ${q.options.map((opt, i) => `${String.fromCharCode(65 + i)}) ${opt}`).join(', ')}
@@ -127,20 +133,24 @@ export const auditQuestion = async (q: QuestionData['original']): Promise<any> =
           }
         }
     });
-    return JSON.parse(response.text);
+    return JSON.parse(response.text || '{}');
 };
 
 export const auditDocument = async (base64Data: string, mimeType: string): Promise<any[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // Fix: Use direct API_KEY reference and correct initialization object
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const DOCUMENT_AUDIT_PROMPT = `Extract ALL multiple-choice questions from this document. Replace all complex math notations/LaTeX with simple plain text (e.g., Delta U instead of symbols). Perform a rigorous audit for each question.`;
   
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: [
-        { inlineData: { data: base64Data, mimeType: mimeType } }, 
-        { text: DOCUMENT_AUDIT_PROMPT }
-      ],
+      // Fix: Correctly wrap multiple parts (inlineData + text) in a single Content object
+      contents: {
+        parts: [
+          { inlineData: { data: base64Data, mimeType: mimeType } }, 
+          { text: DOCUMENT_AUDIT_PROMPT }
+        ]
+      },
       config: {
         systemInstruction: SYSTEM_PROMPT,
         temperature: 0,
@@ -155,7 +165,7 @@ export const auditDocument = async (base64Data: string, mimeType: string): Promi
         }
       }
     });
-    return JSON.parse(response.text);
+    return JSON.parse(response.text || '[]');
   } catch (error) {
     console.error("Gemini Document Audit Error:", error);
     throw error;
