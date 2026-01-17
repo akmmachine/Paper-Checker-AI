@@ -34,8 +34,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ logs }) => {
   return (
     <div className="space-y-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900">Academic Safety Audit Logs</h1>
-        <p className="text-slate-500 font-medium">Tracking error patterns and quality trends across departments.</p>
+        <h1 className="text-3xl font-black text-slate-900">Paper Checker AI Analytics</h1>
+        <p className="text-slate-500 font-medium">Tracking error patterns and quality trends across all sessions.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -107,7 +107,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ logs }) => {
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">Raw Audit Feed</h3>
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">Raw Verification Feed</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">

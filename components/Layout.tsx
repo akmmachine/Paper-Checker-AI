@@ -65,9 +65,9 @@ const Layout: React.FC<LayoutProps> = ({
         <div className="p-6 border-b border-slate-800 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
-              <span className="bg-indigo-600 p-1 rounded">🛡️</span> AuditPro
+              <span className="bg-indigo-600 p-1 rounded">🔍</span> Paper Checker AI
             </h1>
-            <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Academic Safety System</p>
+            <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Intelligent Verification</p>
           </div>
           <button onClick={closeDrawer} className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="space-y-2 px-2">
               {history.length === 0 ? (
                 <div className="px-4 py-3 border border-dashed border-slate-800 rounded-lg">
-                  <p className="text-[10px] text-slate-600 italic leading-relaxed text-center">No audit sessions archived yet.</p>
+                  <p className="text-[10px] text-slate-600 italic leading-relaxed text-center">No paper sessions archived yet.</p>
                 </div>
               ) : (
                 history.map((paper) => (
@@ -158,7 +158,7 @@ const Layout: React.FC<LayoutProps> = ({
             <p className="text-[10px] text-slate-500 mb-2 font-black uppercase tracking-widest">Logged In As</p>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-              <span className="text-sm font-bold text-slate-100">{activeRole === UserRole.TEACHER ? 'Faculty Auditor' : 'QC Supervisor'}</span>
+              <span className="text-sm font-bold text-slate-100">{activeRole === UserRole.TEACHER ? 'Faculty User' : 'QC Supervisor'}</span>
             </div>
           </div>
           <button 
@@ -183,8 +183,8 @@ const Layout: React.FC<LayoutProps> = ({
             </svg>
           </button>
           <div className="flex items-center gap-2">
-            <span className="bg-indigo-600 text-white text-xs p-1 rounded font-bold">🛡️</span>
-            <span className="font-black text-slate-900 uppercase tracking-tighter">AuditPro</span>
+            <span className="bg-indigo-600 text-white text-xs p-1 rounded font-bold">🔍</span>
+            <span className="font-black text-slate-900 uppercase tracking-tighter">Paper Checker AI</span>
           </div>
           <div className="w-10"></div>
         </header>

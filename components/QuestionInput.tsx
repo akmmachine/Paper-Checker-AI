@@ -57,8 +57,6 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
     setIsProcessing(true);
     setProgress(10);
     try {
-      // Process all snippets. We join them to let Gemini handle the batch in one go, 
-      // or we could iterate. Joining is more efficient for tokens if they are small.
       const combinedInput = finalQueue.join('\n\n---NEXT QUESTION---\n\n');
       const results = await auditRawQuestion(combinedInput);
       
@@ -95,7 +93,6 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
 
     setIsProcessing(true);
     const allExtractedQuestions: QuestionData[] = [];
-    // Fix: Explicitly type filesArray to ensure the 'file' variable in the loop is correctly inferred as File
     const filesArray: File[] = Array.from(files);
 
     try {
@@ -117,7 +114,6 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
         
         const mapped = results.map((res: any) => ({
           id: Math.random().toString(36).substr(2, 9),
-          // Differentiate topics by prefixing with filename
           topic: `[${file.name}] ${res.topic || 'General'}`,
           original: res.originalParsed,
           audit: {
@@ -172,7 +168,7 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
               <div className="absolute inset-0 w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <div className="text-center px-6 max-w-sm">
-              <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest">AI Audit Active</h3>
+              <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest">AI Verification Active</h3>
               <p className="text-xs font-bold text-indigo-600 animate-pulse mt-1 h-4">{loadingMessage}</p>
               <div className="mt-6 w-64 h-2 bg-slate-100 rounded-full overflow-hidden mx-auto border border-slate-200">
                 <div 
@@ -236,7 +232,7 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
                 </svg>
-                Stage for Audit
+                Stage for Verification
               </button>
               <button 
                 type="button"
@@ -244,7 +240,7 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
                 disabled={(stagedSnippets.length === 0 && !rawInput.trim()) || isProcessing}
                 className="flex-[1.5] px-10 py-3.5 bg-slate-900 hover:bg-indigo-600 disabled:bg-slate-300 text-white font-black rounded-xl shadow-xl shadow-indigo-100 transition active:scale-95 text-[10px] uppercase tracking-[0.2em]"
               >
-                Run AI Audit (Total: {stagedSnippets.length + (rawInput.trim() ? 1 : 0)})
+                Verify Batch with AI ({stagedSnippets.length + (rawInput.trim() ? 1 : 0)})
               </button>
             </div>
           </div>
@@ -257,7 +253,7 @@ const QuestionInput: React.FC<QuestionInputProps> = ({ onAdd, onAddBulk }) => {
             </div>
             <div className="mt-6 text-center px-4">
               <h3 className="text-lg font-black text-slate-900 uppercase tracking-wide">Multi-File Intake</h3>
-              <p className="text-sm text-slate-500 mt-2 font-medium">Select multiple PDF or Word documents.<br/>Each file will be audited as a separate topic group.</p>
+              <p className="text-sm text-slate-500 mt-2 font-medium">Select multiple PDF or Word documents.<br/>Each file will be processed as a separate topic group.</p>
             </div>
             <button 
               onClick={() => fileInputRef.current?.click()}

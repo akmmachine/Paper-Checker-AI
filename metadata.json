@@ -1,5 +1,5 @@
 {
-  "name": "AuditPro Academic Safety System",
-  "description": "A high-fidelity teacher-facing audit tool for verifying question papers, featuring AI-driven error detection, redlined corrections, and rigorous quality control for academic institutions.",
+  "name": "Paper Checker AI",
+  "description": "An intelligent teacher-facing tool for verifying question papers, featuring AI-driven error detection, redlined corrections, and rigorous quality control.",
   "requestFramePermissions": []
 }
