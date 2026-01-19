@@ -11,6 +11,14 @@ export enum QuestionStatus {
   PENDING = 'PENDING'
 }
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  role: UserRole;
+  avatar: string;
+  department: string;
+}
+
 export interface AuditLog {
   id: string;
   type: 'CONCEPTUAL' | 'NUMERICAL' | 'LOGICAL' | 'GRAMMATICAL';
@@ -23,9 +31,9 @@ export interface QuestionData {
   topic: string;
   original: {
     question: string;
-    options?: string[]; // Optional for numerical/subjective
-    correctOptionIndex?: number; // Optional for non-MCQ
-    correctAnswer?: string; // For numerical/subjective answers
+    options?: string[];
+    correctOptionIndex?: number;
+    correctAnswer?: string;
     solution: string;
   };
   audit?: {
@@ -53,8 +61,10 @@ export interface Paper {
   id: string;
   title: string;
   subject: string;
-  createdBy: string;
-  status: 'DRAFT' | 'IN_REVIEW' | 'LOCKED';
+  createdBy: string; // User ID
+  creatorName: string;
+  status: 'DRAFT' | 'PENDING_QC' | 'APPROVED' | 'REJECTED';
   questions: QuestionData[];
   createdAt: number;
+  lastSyncedAt?: number;
 }
