@@ -23,22 +23,25 @@ export interface QuestionData {
   topic: string;
   original: {
     question: string;
-    options: string[];
-    correctOptionIndex: number;
+    options?: string[]; // Optional for numerical/subjective
+    correctOptionIndex?: number; // Optional for non-MCQ
+    correctAnswer?: string; // For numerical/subjective answers
     solution: string;
   };
   audit?: {
     status: QuestionStatus;
     logs: AuditLog[];
     redlines: {
-      question: string; // HTML-like string with <del> and <ins>
-      options: string[];
+      question: string;
+      options?: string[];
+      correctAnswer?: string;
       solution: string;
     };
     clean: {
       question: string;
-      options: string[];
-      correctOptionIndex: number;
+      options?: string[];
+      correctOptionIndex?: number;
+      correctAnswer?: string;
       solution: string;
     };
   };
