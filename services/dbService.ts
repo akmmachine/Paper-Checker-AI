@@ -7,9 +7,8 @@ const STORAGE_KEY = 'paperchecker_cloud_mock';
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const MOCK_USERS: UserProfile[] = [
-  { id: 'u1', name: 'Dr. Sarah Chen', role: UserRole.TEACHER, avatar: 'SC', department: 'Physics' },
-  { id: 'u2', name: 'Prof. James Wilson', role: UserRole.TEACHER, avatar: 'JW', department: 'Mathematics' },
-  { id: 'u3', name: 'Admin QC', role: UserRole.QC_HEAD, avatar: 'QC', department: 'Examination Cell' }
+  { id: 'u1', name: 'Faculty Teacher', role: UserRole.TEACHER, avatar: 'FT', department: 'Academic Dept' },
+  { id: 'u2', name: 'Admin QC', role: UserRole.QC_HEAD, avatar: 'QC', department: 'Examination Cell' }
 ];
 
 export const dbService = {

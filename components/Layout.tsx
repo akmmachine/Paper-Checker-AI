@@ -53,11 +53,12 @@ const Layout: React.FC<LayoutProps> = ({
     return new Date(ts).toLocaleDateString();
   };
 
+  // Fix: Updated switch cases to align with Paper['status'] union type: 'DRAFT' | 'PENDING_QC' | 'APPROVED_LOCKED'
   const getStatusBadge = (status: Paper['status']) => {
     switch(status) {
       case 'PENDING_QC': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'APPROVED': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'REJECTED': return 'bg-rose-100 text-rose-700 border-rose-200';
+      case 'APPROVED_LOCKED': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'DRAFT': return 'bg-slate-100 text-slate-500 border-slate-200';
       default: return 'bg-slate-100 text-slate-500 border-slate-200';
     }
   };
